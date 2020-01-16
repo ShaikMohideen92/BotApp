@@ -11,6 +11,8 @@ using Microsoft.Bot.Builder.AI.QnA;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.BotBuilderSamples.Utils;
+using Newtonsoft.Json;
+using QnABot.Utils;
 
 namespace Microsoft.BotBuilderSamples.Dialog
 {
@@ -344,27 +346,36 @@ namespace Microsoft.BotBuilderSamples.Dialog
         {
             
             string[] qnaAnswerData = results[0].Answer.Split(';');
+            RootObject resultData = null;
+            if (Helper.IsValidJson(results[0].Answer))
+            {
+                resultData = JsonConvert.DeserializeObject<QnABot.Utils.RootObject>(results[0].Answer);
+            }
             int dataSize = qnaAnswerData.Length;
-            if (results.Any())
+            if (resultData != null || !string.IsNullOrEmpty(results[0].Answer))
             {
                 var attachments = new List<Attachment>();
                 // Reply to the activity we received with an activity.
                 var reply = MessageFactory.Attachment(attachments);
                 //image card have 5 paramters
-                if (dataSize == 5)
+                if (resultData != null && !string.IsNullOrEmpty(resultData.VideoUrl))
                 {
-                    reply.Attachments.Add(Cards.GetHeroCard(qnaAnswerData).ToAttachment());
+                    reply.Attachments.Add(Cards.GetVideoCard(resultData).ToAttachment());
                     await turnContext.SendActivityAsync(reply, cancellationToken);
                 }
                 //video card have 6 parameter
-                else if (dataSize == 6)
+                else if (resultData != null && (!string.IsNullOrEmpty(resultData.ImageUrl)
+                         || !string.IsNullOrEmpty(resultData.Description) || !string.IsNullOrEmpty(resultData.Title)))
                 {
-                    reply.Attachments.Add(Cards.GetVideoCard(qnaAnswerData).ToAttachment());
+                    reply.Attachments.Add(Cards.GetHeroCard(resultData).ToAttachment());
                     await turnContext.SendActivityAsync(reply, cancellationToken);
                 }
                 else
                 {
-                    await turnContext.SendActivityAsync(MessageFactory.Text(results.First().Answer), cancellationToken);
+                    if (!string.IsNullOrEmpty(results[0].Answer))
+                    {
+                        await turnContext.SendActivityAsync(MessageFactory.Text(results.First().Answer), cancellationToken);
+                    }
                 }
             }
             else

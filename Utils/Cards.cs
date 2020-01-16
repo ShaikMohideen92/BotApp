@@ -8,35 +8,35 @@ namespace Microsoft.BotBuilderSamples.Utils
 {
     public static class  Cards
     {
-        public static HeroCard GetHeroCard(string[] qnaAnswerData)
+        public static HeroCard GetHeroCard(QnABot.Utils.RootObject qnaAnswerData)
         {
             var heroCard = new HeroCard
             {
-                Title = qnaAnswerData[0],
-                Subtitle = qnaAnswerData[1],
-                Text = qnaAnswerData[2],
-                Images = new List<CardImage> { new CardImage(qnaAnswerData[3]) },
-                Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "Get Started", value: qnaAnswerData[4]) },
+                Title = qnaAnswerData.Title,
+                Subtitle = qnaAnswerData.SubTitle,
+                Text = qnaAnswerData.Description,
+                Images = new List<CardImage> { new CardImage(qnaAnswerData.ImageUrl) },
+                Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "Get Started", value: qnaAnswerData.CtaLink) },
             };
 
             return heroCard;
         }
-        public static VideoCard GetVideoCard(string[] qnaAnswerData)
+        public static VideoCard GetVideoCard(QnABot.Utils.RootObject qnaAnswerData)
         {
             var videoCard = new VideoCard
             {
-                Title = qnaAnswerData[0],
-                Subtitle = qnaAnswerData[1],
-                Text = qnaAnswerData[2],
+                Title = qnaAnswerData.Title,
+                Subtitle = qnaAnswerData.SubTitle,
+                Text = qnaAnswerData.Description,
                 Image = new ThumbnailUrl
                 {
-                    Url = qnaAnswerData[3],
+                    Url = qnaAnswerData.ImageUrl,
                 },
                 Media = new List<MediaUrl>
                 {
                     new MediaUrl()
                     {
-                        Url = qnaAnswerData[4],
+                        Url = qnaAnswerData.VideoUrl,
                     },
                 },
                 Buttons = new List<CardAction>
@@ -45,7 +45,7 @@ namespace Microsoft.BotBuilderSamples.Utils
                     {
                         Title = "Learn More",
                         Type = ActionTypes.OpenUrl,
-                        Value =  qnaAnswerData[5],
+                        Value =  qnaAnswerData.CtaLink,
                     },
                 },
             };
