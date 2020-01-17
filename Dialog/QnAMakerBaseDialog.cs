@@ -358,6 +358,10 @@ namespace Microsoft.BotBuilderSamples.Dialog
                 // Reply to the activity we received with an activity.
                 var reply = MessageFactory.Attachment(attachments);
                 //image card have 5 paramters
+                if(resultData != null && !string.IsNullOrEmpty(resultData.SlackData) && turnContext.Activity.ChannelId == "Slack")
+                {
+                    await turnContext.SendActivityAsync(MessageFactory.Text(resultData.SlackData), cancellationToken);
+                }
                 if (resultData != null && !string.IsNullOrEmpty(resultData.VideoUrl))
                 {
                     reply.Attachments.Add(Cards.GetVideoCard(resultData).ToAttachment());
