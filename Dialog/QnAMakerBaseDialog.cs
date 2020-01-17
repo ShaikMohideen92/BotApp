@@ -51,7 +51,7 @@ namespace Microsoft.BotBuilderSamples.Dialog
         /// Dialog helper to generate dialogs.
         /// </summary>
         /// <param name="_services">Bot Services.</param>
-        public QnAMakerBaseDialog(IBotServices services): base(nameof(QnAMakerBaseDialog))
+        public QnAMakerBaseDialog(IBotServices services) : base(nameof(QnAMakerBaseDialog))
         {
             AddDialog(new WaterfallDialog(QnAMakerDialogName)
                 .AddStep(CallGenerateAnswerAsync)
@@ -139,7 +139,7 @@ namespace Microsoft.BotBuilderSamples.Dialog
             var isActiveLearningEnabled = response.ActiveLearningEnabled;
 
             stepContext.Values[QnAData] = new List<QueryResult>(response.Answers);
-            
+
             // Check if active learning is enabled.
             if (isActiveLearningEnabled && response.Answers.Any() && response.Answers.First().Score <= maximumScoreForLowScoreVariation)
             {
@@ -344,10 +344,10 @@ namespace Microsoft.BotBuilderSamples.Dialog
 
         private async Task AccessQnAMaker(ITurnContext turnContext, List<QueryResult> results, CancellationToken cancellationToken)
         {
-            
+
             string[] qnaAnswerData = results[0].Answer.Split(';');
             RootObject resultData = null;
-            if (Helper.IsValidJson(results[0].Answer))
+            if (Helper.IsValidJson(results[0].Answer) && results[0].Answer.Contains("VideoUrl"))
             {
                 resultData = JsonConvert.DeserializeObject<QnABot.Utils.RootObject>(results[0].Answer);
             }
@@ -357,11 +357,7 @@ namespace Microsoft.BotBuilderSamples.Dialog
                 var attachments = new List<Attachment>();
                 // Reply to the activity we received with an activity.
                 var reply = MessageFactory.Attachment(attachments);
-                //image card have 5 paramters
-                if(resultData != null && !string.IsNullOrEmpty(resultData.SlackData) && turnContext.Activity.ChannelId == "Slack")
-                {
-                    await turnContext.SendActivityAsync(MessageFactory.Text(resultData.SlackData), cancellationToken);
-                }
+                //image card have 5 paramters               
                 if (resultData != null && !string.IsNullOrEmpty(resultData.VideoUrl))
                 {
                     reply.Attachments.Add(Cards.GetVideoCard(resultData).ToAttachment());
