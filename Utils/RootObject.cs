@@ -12,6 +12,7 @@ namespace QnABot.Utils
         public string Description { get; set; }
         public string ImageUrl { get; set; }        
         public string VideoUrl { get; set; }
+        public string YouTubeUrl { get; set; }
         public string CtaLink { get; set; }
     }
 }

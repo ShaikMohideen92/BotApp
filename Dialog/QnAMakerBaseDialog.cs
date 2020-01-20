@@ -357,24 +357,31 @@ namespace Microsoft.BotBuilderSamples.Dialog
                 var attachments = new List<Attachment>();
                 // Reply to the activity we received with an activity.
                 var reply = MessageFactory.Attachment(attachments);
-                //image card have 5 paramters               
-                if (resultData != null && !string.IsNullOrEmpty(resultData.VideoUrl))
+                if (resultData != null && turnContext.Activity.ChannelId == "Slack")
                 {
-                    reply.Attachments.Add(Cards.GetVideoCard(resultData).ToAttachment());
-                    await turnContext.SendActivityAsync(reply, cancellationToken);
-                }
-                //video card have 6 parameter
-                else if (resultData != null && (!string.IsNullOrEmpty(resultData.ImageUrl)
-                         || !string.IsNullOrEmpty(resultData.Description) || !string.IsNullOrEmpty(resultData.Title)))
-                {
-                    reply.Attachments.Add(Cards.GetHeroCard(resultData).ToAttachment());
-                    await turnContext.SendActivityAsync(reply, cancellationToken);
+                    await turnContext.SendActivityAsync(MessageFactory.Text(Cards.GetSlackCard(resultData)), cancellationToken);
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(results[0].Answer))
+                    //image card have 5 paramters               
+                    if (resultData != null && !string.IsNullOrEmpty(resultData.VideoUrl))
                     {
-                        await turnContext.SendActivityAsync(MessageFactory.Text(results.First().Answer), cancellationToken);
+                        reply.Attachments.Add(Cards.GetVideoCard(resultData).ToAttachment());
+                        await turnContext.SendActivityAsync(reply, cancellationToken);
+                    }
+                    //video card have 6 parameter
+                    else if (resultData != null && (!string.IsNullOrEmpty(resultData.ImageUrl)
+                             || !string.IsNullOrEmpty(resultData.Description) || !string.IsNullOrEmpty(resultData.Title)))
+                    {
+                        reply.Attachments.Add(Cards.GetHeroCard(resultData).ToAttachment());
+                        await turnContext.SendActivityAsync(reply, cancellationToken);
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(results[0].Answer))
+                        {
+                            await turnContext.SendActivityAsync(MessageFactory.Text(results.First().Answer), cancellationToken);
+                        }
                     }
                 }
             }

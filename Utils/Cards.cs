@@ -21,6 +21,13 @@ namespace Microsoft.BotBuilderSamples.Utils
 
             return heroCard;
         }
+        public static string GetSlackCard(QnABot.Utils.RootObject qnaAnswerData)
+        {
+            string heading = "*" + qnaAnswerData.Title + "* \n\n";
+            string desc = "_" + qnaAnswerData.Description + "_ \n\n";
+            return heading + qnaAnswerData.YouTubeUrl + "\n\n" + desc + "> " + qnaAnswerData.CtaLink;
+
+        }
         public static VideoCard GetVideoCard(QnABot.Utils.RootObject qnaAnswerData)
         {
             var videoCard = new VideoCard
